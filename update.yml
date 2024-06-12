@@ -1,0 +1,24 @@
+---
+# The --- means we are in a YAML file
+- name: "Update apt" # the name what we are going to do
+  hosts: all  # all the hosts from the inventory file
+  become: yes # we are becoming root to run this ansible
+  become_method: sudo # to become root we are using sudo
+  become_user: root # and we become root. Maybe this is not needed
+  vars_files: # We specify a YAML file that contains variable. We can specify multiple files
+    - become_vault.yml
+  vars: # We list the variable and in this case we give the password to become root
+    ansible_become_pass: "{{ become_sudo }}"
+  tasks:  # the tasks, with the name and what we are going to do
+    - name: "apt update"
+      apt:
+        update_cache: yes
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+
+    - name: "apt dist-upgrade"
+      apt:
+        upgrade: dist
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+
